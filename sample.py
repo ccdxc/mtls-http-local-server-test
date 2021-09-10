@@ -53,5 +53,6 @@ def do_test(cert_path, key_id):
 
 
 if __name__ == "__main__":
-    do_test("./rsa-client-cert.pem", b"pkcs11:token=token1;object=rsaclient;pin-value=mynewpin")
+    #do_test("./rsa-client-cert.pem", b"pkcs11:token=token1;object=rsaclient;pin-value=mynewpin")
+    do_test("./ec-client-cert.pem", b"pkcs11:token=token1;object=ecclient;pin-value=mynewpin")
     #do_test("./cert.pem", b"pkcs11:token=token1;object=mtlskey;pin-value=mynewpin")

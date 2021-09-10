@@ -120,7 +120,8 @@ as the server side SSL credentials. The `-CAfile` is used to specify the CA file
 it depends on which client side cert you want to use.
 
 If you want to use the real cert/key generated from `apihelper`, then use `cert.pem` as the `-CAfile`; 
-if you want to test the self signed RSA cert/key, then use `rsa-client-cert.pem` as the `-CAfile`. 
+if you want to test the self signed RSA cert/key, then use `rsa-client-cert.pem` as the `-CAfile`;
+if you want to test the self signed EC cert/key, then use `ec-client-cert.pem` as the `-CAfile`.
 
 ```bash
 openssl s_server -cert rsa-server-cert.pem -key rsa-server-key.pem \

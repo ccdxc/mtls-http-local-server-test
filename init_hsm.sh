@@ -32,3 +32,16 @@ pkcs11-tool  --module /usr/local/lib/softhsm/libsofthsm2.so --pin mynewpin \
    --write-object rsa-client-key.pem --type privkey --id 2222 --label rsaclient --slot-index 0
 pkcs11-tool  --module /usr/local/lib/softhsm/libsofthsm2.so --pin mynewpin \
    --write-object rsa-client-cert.pem --type cert --id 2222 --label rsaclient --slot-index 0
+
+
+echo "============ generating self signed EC keys for client"
+openssl ecparam -noout -name prime256v1 -genkey -out ec-client-key.pem -outform PEM
+openssl req -new -x509 -key ec-client-key.pem -out ec-client-cert.pem -days 730 -subj '/CN=my-mtls-test-ec-key'
+
+echo "============ writing self signed EC client keys into softhsm, label: ecclient, id: 3333"
+
+# Write RSA cert/key to HSM, label is "rsaclient"
+pkcs11-tool  --module /usr/local/lib/softhsm/libsofthsm2.so --pin mynewpin \
+   --write-object ec-client-key.pem --type privkey --id 3333 --label ecclient --slot-index 0
+pkcs11-tool  --module /usr/local/lib/softhsm/libsofthsm2.so --pin mynewpin \
+   --write-object ec-client-cert.pem --type cert --id 3333 --label ecclient --slot-index 0
