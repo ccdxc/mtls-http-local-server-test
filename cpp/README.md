@@ -35,7 +35,10 @@ HSM) into the given SSL_CTX, and returns 1 if succeeded. Similarly there is a `u
 function. Right now we are hardcoding the cert path and key id in `so.c`, we will figure out
 how to pass cert bytes and key id to these functions in the future.
 
-`sample.py` will load the `my_functions.so` and call these functions. Choose `do_test(True)`
+Now you can run `python load_so.py` to test these functions. You should see two `1`'s indicating
+both functions return 1.
+
+Now you can run end to end test with `sample.py`. `sample.py` loads the `my_functions.so` and 
+call these functions. Choose `do_test(True)`
 for RSA key and `do_test(False)` for EC key in `sample.py`, and run `sample.py`. You should 
 see the 200 status.
-
