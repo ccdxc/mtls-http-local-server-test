@@ -1,19 +1,27 @@
 import ctypes
 import cffi
-so_file = "./my_functions.so"
-ffi = cffi.FFI()
-
-my_functions = ctypes.CDLL(so_file)
-use_key_cert2 = my_functions.use_key_cert2
-use_key_cert2.argtypes = [ctypes.c_void_p]
-
-load_key2 = my_functions.load_key2
-
 import urllib3.contrib.pyopenssl
 urllib3.contrib.pyopenssl.inject_into_urllib3()
 from requests.packages.urllib3.util.ssl_ import create_urllib3_context
 
-ctx = create_urllib3_context()
-print(type(ctx._ctx))
-ctx_ptr = ctypes.cast(int(ffi.cast("intptr_t", ctx._ctx._context)), ctypes.c_void_p)
-print(use_key_cert2(ctx_ptr))
+so_file = "./my_functions.so"
+ffi = cffi.FFI()
+my_functions = ctypes.CDLL(so_file)
+
+# RSA cert/key
+
+use_rsa_key_cert = my_functions.use_rsa_key_cert
+use_rsa_key_cert.argtypes = [ctypes.c_void_p]
+
+ctx_rsa = create_urllib3_context()
+ctx_rsa_ptr = ctypes.cast(int(ffi.cast("intptr_t", ctx_rsa._ctx._context)), ctypes.c_void_p)
+print(use_rsa_key_cert(ctx_rsa_ptr))
+
+# EC cert/key
+
+use_ec_key_cert = my_functions.use_ec_key_cert
+use_ec_key_cert.argtypes = [ctypes.c_void_p]
+
+ctx_ec = create_urllib3_context()
+ctx_ec_ptr = ctypes.cast(int(ffi.cast("intptr_t", ctx_ec._ctx._context)), ctypes.c_void_p)
+print(use_ec_key_cert(ctx_ec_ptr))

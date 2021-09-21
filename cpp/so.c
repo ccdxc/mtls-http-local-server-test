@@ -8,7 +8,7 @@ void report_error(const char* msg) {
     abort(); // failed
 }
 
-EVP_PKEY* load_key()
+EVP_PKEY* load_rsa_key()
 {
     ENGINE_load_builtin_engines();
     ENGINE_load_dynamic();
@@ -41,7 +41,7 @@ EVP_PKEY* load_key()
     return key;
 }
 
-void* load_key2()
+void* load_ec_key()
 {
     ENGINE_load_dynamic();
     ENGINE* engine = ENGINE_by_id("pkcs11");
@@ -54,39 +54,37 @@ void* load_key2()
     if (!ENGINE_init(engine)) {
         report_error("ENGINE_init");
     }
-    EVP_PKEY *private_key = ENGINE_load_private_key(engine, "pkcs11:token=token1;object=rsaclient;pin-value=mynewpin", 0, 0);
+    EVP_PKEY *private_key = ENGINE_load_private_key(engine, "pkcs11:token=token1;object=ecclient;pin-value=mynewpin", 0, 0);
     if (!private_key) {
       report_error("ENGINE_load_private_key");
     }
-    printf("private_key: %p\n", private_key);
+
     return private_key;
 }
 
-int use_key_cert(SSL_CTX *ctx)
+int use_rsa_key_cert(SSL_CTX *ctx)
 {
-    EVP_PKEY* key = load_key();
-    if (!SSL_CTX_use_certificate_file(ctx, "./../rsa-client-cert.pem", 1)) {
+    SSL_CTX *casted_ctx = (SSL_CTX *)ctx;
+
+    EVP_PKEY* key = load_rsa_key();
+    if (!SSL_CTX_use_certificate_file(casted_ctx, "./../rsa-client-cert.pem", 1)) {
         report_error("use cert file");
     }
-    if (!SSL_CTX_use_PrivateKey(ctx, key)) {
+    if (!SSL_CTX_use_PrivateKey(casted_ctx, key)) {
         report_error("use private key");
     }
 
     return 1;
 }
 
-int use_key_cert2(void *ctx)
+int use_ec_key_cert(void *ctx)
 {
-    printf("original_ctx is: %p\n", ctx);
     SSL_CTX *casted_ctx = (SSL_CTX *)ctx;
-    printf("casted_ctx is: %p\n", casted_ctx);
 
-    EVP_PKEY* key = load_key2();
-    printf("after load key\n");
-    if (!SSL_CTX_use_certificate_file(casted_ctx, "./../rsa-client-cert.pem", 1)) {
+    EVP_PKEY* key = load_ec_key();
+    if (!SSL_CTX_use_certificate_file(casted_ctx, "./../ec-client-cert.pem", 1)) {
         report_error("use cert file");
     }
-    printf("after use cert\n");
     if (!SSL_CTX_use_PrivateKey(casted_ctx, key)) {
         report_error("use private key");
     }
