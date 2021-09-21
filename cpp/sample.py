@@ -59,5 +59,10 @@ def do_test(use_rsa):
 
 
 if __name__ == "__main__":
-    do_test(True)
+    # uncomment for RSA key
+    #do_test(True)
+
+    # uncomment for EC key
     #do_test(False)
+    
+    pass
