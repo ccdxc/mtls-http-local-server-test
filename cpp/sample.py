@@ -20,11 +20,22 @@ class HsmAdapter(HTTPAdapter):
         my_functions = ctypes.CDLL(so_file)
 
         if self.use_rsa:
-            use_rsa_key_cert = my_functions.use_rsa_key_cert
-            use_rsa_key_cert.argtypes = [ctypes.c_void_p]
+            # use_rsa_key_cert = my_functions.use_rsa_key_cert
+            # use_rsa_key_cert.argtypes = [ctypes.c_void_p]
+
+            # ctx_ptr = ctypes.cast(int(ffi.cast("intptr_t", ctx._ctx._context)), ctypes.c_void_p)
+            # print(use_rsa_key_cert(ctx_ptr))
+
+            use_key_cert = my_functions.use_key_cert
+            use_key_cert.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
 
             ctx_ptr = ctypes.cast(int(ffi.cast("intptr_t", ctx._ctx._context)), ctypes.c_void_p)
-            print(use_rsa_key_cert(ctx_ptr))
+            print(use_key_cert(
+                ctx_ptr, 
+                b"pkcs11", 
+                b"/usr/lib/x86_64-linux-gnu/engines-1.1/libpkcs11.so", 
+                b"/usr/local/lib/softhsm/libsofthsm2.so", 
+                b"pkcs11:token=token1;object=rsaclient;pin-value=mynewpin"))
         else:
             use_ec_key_cert = my_functions.use_ec_key_cert
             use_ec_key_cert.argtypes = [ctypes.c_void_p]
@@ -60,9 +71,9 @@ def do_test(use_rsa):
 
 if __name__ == "__main__":
     # uncomment for RSA key
-    #do_test(True)
+    do_test(True)
 
     # uncomment for EC key
     #do_test(False)
-    
+
     pass
